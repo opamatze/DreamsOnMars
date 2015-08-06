@@ -19,9 +19,12 @@
         .container { width: 1000px; margin-left:auto; margin-right:auto; border: 0px dashed green; }
         .row { border: 0px solid darkgreen; background-color:floralwhite; margin-bottom: 10px; opacity: .75; border-radius: 15px; }
         .simonRowTop { border-radius: 0px 0px 15px 15px; text-align:center;}
-        .simonRowMid { height:400px;}
+        .simonRowSecond { height:200px;}
         .simonCol { border: 0px dashed greenyellow; }
         .simonColUser { padding:10px;}
+        #resource_container { padding: 5px; }
+        #module_container { padding: 5px; height: 250px; overflow-y:auto;}
+        #event_container { padding: 5px; height: 100%; overflow-y:auto;}
 
     </style>
 </head>
@@ -31,9 +34,14 @@
     <div class="row simonRowTop">
         <h1> Dreams on Mars </h1>
     </div>
-    <div class="row simonRowMid">
-        <div class="col-lg-7 simonCol" id="gameStatus"> Spielstand </div>
-        <div class="col-lg-5 simonCol" id="gameEvents"> Ereignisse </div>
+    <div class="row simonRowSecond">
+            <div class="col-lg-5 simonCol" id="resource_container"> Resourcen
+            </div>
+            <div class="col-lg-7 simonCol" id="event_container"> Ereignisse
+            </div>
+    </div>
+    <div class="row" id="module_container">
+
     </div>
     <div class="row row_bottom">
         <div class="col-lg-12 simonCol simonColUser" id="gameControl">
@@ -46,6 +54,7 @@
         </div>
 
     </div>
+    <div class="row" id="debug"></div>
 </div>
 
 <!--

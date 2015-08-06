@@ -1,3 +1,4 @@
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public class View {
 
         JSONObject resources;
         JSONObject modules;
-        JSONObject events;
+        JSONArray events;
 
         System.out.println("view constr called");
         System.out.println("state.resources: "+state.resources.toString());
@@ -22,7 +23,7 @@ public class View {
             //exists always
         resources = new JSONObject();
         for(Map.Entry<String,Resource> res : state.resources.entrySet()) {
-            resources.put(res.getValue().name,res.getValue().amount);
+            resources.put(res.getValue().name, res.getValue().amount);
         }
             //check if modules exist
         modules = new JSONObject();
@@ -30,6 +31,7 @@ public class View {
             for(Map.Entry<String,Module> m : state.modules.entrySet()) {
                     //put the whole object
                 JSONObject next_module = new JSONObject();
+                next_module.put("name", m.getValue().name);
                 next_module.put("status", m.getValue().statusText[m.getValue().statusIndex]);
                 JSONObject constrObj = createDoubleMap(m.getValue().construction_cost);
                 next_module.put("construction_cost", constrObj);
@@ -38,7 +40,7 @@ public class View {
                 JSONObject prodObj = createDoubleMap(m.getValue().produces);
                 next_module.put("produces", prodObj);
                 next_module.put("construction_rounds_remain", m.getValue().constrRnds);
-                modules.append(m.getValue().name, next_module);
+                modules.append(m.getKey(), next_module);
             }
         }
             //check if event_stack exist
@@ -48,15 +50,15 @@ public class View {
 
         }
         else {
-            events = new JSONObject();
+            events = new JSONArray();
             System.out.println("new JSONObject();");
         }
 
         browserOutput.append("resources", resources);
         browserOutput.append("modules",modules);
-        browserOutput.append("events",events);
+        browserOutput.append("gameEvents",events);
 
-        state.event_browserOutput_stack.clear();
+        //state.event_browserOutput_stack.clear();
         System.out.println("browserOutput constructed: "+browserOutput.toString());
 
     }
@@ -74,15 +76,24 @@ public class View {
         }
         return jsObj;
     }
+    /*
     private JSONObject createEventList(List<Integer> list, Model state) {
         JSONObject jsonObj = new JSONObject();
-        for(Integer entry : list) {
-            System.out.println("EVENTLIST: "+entry+state.getEventByID(entry));
-            jsonObj.put(entry.toString(), state.getEventByID(entry));
+            //last elements first
+        //for(Integer i = list.size() - 1; i>=0; i--) {
+            for(Integer i = 0; i<list.size();i++) {
+            jsonObj.put(i.toString(), "+++"+state.getEventByID(list.get(i)));
         }
-        System.out.println("EVENTLIST OUTPUT: "+jsonObj.toString());
 
         return jsonObj;
+    }*/
+    private JSONArray createEventList(List<Integer> list, Model state) {
+        JSONArray jsonArr = new JSONArray();
+    //    for(Integer i = 0; i<list.size();i++) {
+        for(Integer i = list.size() - 1; i>=0; i--) {
+            jsonArr.put("+++"+state.getEventByID(list.get(i)));
+        }
+        return jsonArr;
     }
     public String viewToString() {
         return browserOutput.toString();
