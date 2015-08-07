@@ -1,3 +1,5 @@
+//package java;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -32,6 +34,11 @@ public class View {
                     //put the whole object
                 JSONObject next_module = new JSONObject();
                 next_module.put("name", m.getValue().name);
+                next_module.put("id", m.getValue().id);
+                next_module.put("assignedTo", m.getValue().assignedTo);
+                next_module.put("statusIndex",m.getValue().statusIndex);
+                next_module.put("automatic",m.getValue().automatic);
+                next_module.put("constrRnds", m.getValue().constrRnds);
                 next_module.put("status", m.getValue().statusText[m.getValue().statusIndex]);
                 JSONObject constrObj = createDoubleMap(m.getValue().construction_cost);
                 next_module.put("construction_cost", constrObj);

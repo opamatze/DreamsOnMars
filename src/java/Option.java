@@ -1,3 +1,5 @@
+//package java;
+
 public class Option {
     public String name;
     public double min_science;

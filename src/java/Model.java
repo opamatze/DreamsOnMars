@@ -1,3 +1,5 @@
+//package java;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,17 +11,24 @@ public class Model {
     public Map<String, Module>   modules;
     public Map<String, Option>   options;
     public Map<Integer, Event>    events;
+    public Map<String, Settler>   settler;
 
     public List<Integer> event_browserOutput_stack;
 
     public int round;
 
-    Model(Map<String, Resource> resources,Map<String, Module> modules, Map<String, Option> options, Map<Integer,Event> events) {
+    Model(Map<String, Resource> resources,Map<String, Module> modules, Map<String,Settler> settler,
+            Map<String, Option> options, Map<Integer,Event> events) {
 
         event_browserOutput_stack = new ArrayList<>();
 
         this.resources = new HashMap<>(resources);
         this.modules   = new HashMap<>(modules);
+        for(Map.Entry<String,Module> entry : modules.entrySet()) {
+            entry.getValue().build_module(this);
+            entry.getValue().id = entry.getKey();
+        }
+        this.settler   = new HashMap<>(settler);
         this.options   = new HashMap<>(options);
         this.events    = new HashMap<>(events);
         round     = 1;
@@ -56,22 +65,49 @@ public class Model {
     public void add_option() {}
     public boolean add_module(String new_module) {
 
-        Module add_module = new Module(new_module);
-        add_module.build_module(this);
-        if(add_module.statusIndex != 2) {
-            boolean inserted = false;
+        Module newModule = new Module(new_module);
+            //buy if enough resources
+        newModule.build_module(this);
+            //if successful (other than 2 = forget new module)
+        if(newModule.statusIndex != 2) {
             int i = 0;
-            while (!inserted) {
-                System.out.println(modules.containsKey(add_module.name+i));
-                if(!modules.containsKey(add_module.name+i)) {
-                    modules.put(add_module.name + i, add_module);
-                    inserted = true;
+            while (true) {
+                if(!modules.containsKey(newModule.name+i)) {
+                    newModule.id = newModule.name+i;
+                    modules.put(newModule.name + i, newModule);
+                    return true;
                 }
                 else i++;
+
+                if(i > 10000) {
+                System.out.println("Ein Fehler ist in add_module aufgetreten");
+                System.exit(1);
+                }
             }
-            return true;
         }
         else return false; //wird nicht gebaut
+    }
+    public boolean add_settler() {
+        Settler newSettler = new Settler();
+        Module newModule = new Module("settler"); //jeder Settler hat ein Modul mit gleicher id
+        newModule.build_module(this);
+        int i = 1;
+        while(true) {
+            if(!settler.containsKey(newSettler.name + i)) {
+                newSettler.id = newSettler.name + i;
+                newModule.id  = newSettler.id;
+                settler.put(newSettler.name + i, newSettler);
+                modules.put(newSettler.name + i, newModule);
+                return true;
+            }
+            else i++;
+
+            if(i > 10000) {
+                 System.out.println("Ein Fehler ist in add_settler aufgetreten");
+                 System.exit(1);
+             }
+        }
+
     }
     public boolean remove_module(String del_module) {
 
@@ -80,13 +116,52 @@ public class Model {
             return true;
         } else return false;
     }
+    public boolean remove_settler(String id) {
+        if(settler.isEmpty()) {
+            System.out.println("Keine Siedler mehr da");
+            System.exit(1);
+        }
+            //remove random settler and take any id
+        if(id.equals("settler")) {
+            String arbKey = ""; //arbetrery key
+            for(Map.Entry<String,Settler> entry : settler.entrySet()) {
+                arbKey = entry.getKey();
+                break; //end foreach after first element
+            }
+            id = arbKey; //override
+        }
 
+            //modul entfernen
+        if(modules.containsKey(id)) {
+            modules.get(id).statusIndex = 2; //ready for delete
+        }
+        //free module
+        for(Map.Entry<String,Module> entry : modules.entrySet()) {
+            Module module = entry.getValue();
+            if(module.assignedTo.equals(id)) {
+                module.unassign(this);
+            }
+        }
+        //siedler entfernen
+        if(settler.containsKey(id)) {
+            settler.remove(id);
+            return false;
+        }
+
+        System.out.println("settlerid: "+id+" existiert nicht, aber alle möglichen Überreste wurden entfernt.");
+        return false;
+    }
+    public void garbageCollectorModules() {
+        for(Map.Entry<String,Module> entry : modules.entrySet()) {
+            Module module = entry.getValue();
+            if(module.statusIndex == 2) modules.remove(module.id);
+        }
+
+    }
     public void increment_round() {
         round++;
     }
-    public void change_module_status() {
 
-    }
     public String getEventByID(int id) {
         return events.get(id).info;
     }

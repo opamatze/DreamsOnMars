@@ -1,12 +1,13 @@
 var time_interval;
 var username = "luise";
 var building = "";
+var change_assignment = "";
 
 function pull_new_status(new_username)
 {
     username = new_username;
     $.post("http://localhost:8088/webgate",
-            {"username":username,"new_module":building},
+            {"username":username,"new_module":building,"change_assignment":change_assignment},
 
             function(data,status) {
             try {//subData = data.substring(2);
@@ -37,6 +38,33 @@ function pull_new_status(new_username)
                 $("#module_container").append("<b>MODULE:</b><br>")
                 $.each( modules, function( index, obj) {
                     var modul = obj[0];
+                        //buttons
+                    if(modul.statusIndex == 0) {
+                        $("#module_container").append("<button class='btn btn-sm btn-default' " +
+                            "type='button' id ='" + modul.id + "' title='assign it'> Off </button>  ");
+                        $("#" + modul.id).click(function () {
+                            this.blur();
+                            change_assignment = "assign!" + modul.id;
+                        });
+                    }
+                    else if(modul.statusIndex == 1 && modul.automatic == false) {
+                        $("#module_container").append("<button class='btn btn-sm btn-success'" +
+                            "type='button' id ='" + modul.id + "' title='unassign it'> OK </button>  ");
+                        $("#" + modul.id).click(function () {
+                            this.blur();
+                            change_assignment = "unassign!" + modul.id;
+                        });
+                    }
+                    else if(modul.statusIndex == 1 && modul.automatic == true) {
+                        $("#module_container").append("<button class='btn btn-sm btn-primary'" +
+                            "type='button' id ='" + modul.id + "' title='works automatic'> AUTO </button>  ");
+                    }
+                    else if(modul.statusIndex == 3) {
+                        $("#module_container").append("<button class='btn btn-sm btn-warning'" +
+                            "type='button' id ='" + modul.id + "' title='under construction'> "+
+                                modul.constrRnds+" </button>  ");
+                    }
+                        //text
                     $("#module_container").append(modul.name+"("+modul.status+") | uses(");
                     var first = true;
                     $.each (modul.uses, function(item, value) {
@@ -59,7 +87,7 @@ function pull_new_status(new_username)
                             $("#module_container").append(","+item+": "+value);
                         }
                     });
-                    $("#module_container").append(")<br>");
+                    $("#module_container").append(") assTo: "+modul.assignedTo+"<br>");
                 });
 
 
@@ -72,7 +100,7 @@ function pull_new_status(new_username)
 
             })
        //     .done(function() { alert("done");})
-            .fail(function() { $("#gameEvents").append("Fail - keine Verbindung zum Server")});
+            .fail(function() { $("#debug").html("Fail - keine Verbindung zum Server")});
 
 
 }

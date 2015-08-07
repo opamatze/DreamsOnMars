@@ -1,3 +1,5 @@
+//package java;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
@@ -10,6 +12,7 @@ public class Event {
     public int min_rounds_passed; //before event can happen
     public Map<String, Double> effect_on_resources;
     public Map<String, Integer> effect_on_modules; //1 = neues Modul, 2 = Modul entfernen
+    public Map<String, Integer> effect_on_settler; //1 = neuer Siedler 2 = Siedler muss sterben
 
     Event() {
         System.out.println("Event() constructor is called");
@@ -19,6 +22,7 @@ public class Event {
 
         effect_on_modules = new HashMap<>();
         effect_on_resources = new HashMap<>();
+        effect_on_settler = new HashMap<>();
 
         this.id = id;
         this.info = info;
@@ -34,6 +38,8 @@ public class Event {
         if(type == "resource") effect_on_resources.put(key,value);
         else {}
         if(type == "module") effect_on_modules.put(key,value.intValue());
+        else {}
+        if(type == "settler") effect_on_settler.put(key,value.intValue());
         else {}
     }
     public void pick_event_by_stack(Model state, List<Integer> event_stack) {
@@ -75,6 +81,13 @@ public class Event {
                 if (eom.getValue() == 2) state.remove_module(eom.getKey());
             }
         }
+            //verändere settler
+        if(!state.events.get(event_id).effect_on_settler.isEmpty()) {
+            for(Map.Entry<String,Integer> eos : state.events.get(event_id).effect_on_settler.entrySet()) {
+                if (eos.getValue() == 1) state.add_settler();
+                if (eos.getValue() == 2) state.remove_settler(eos.getKey());
+            }
+        }      
             //verändere optionen
                 //noch nicht geschrieben
 

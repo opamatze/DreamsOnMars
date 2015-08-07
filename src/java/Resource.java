@@ -1,6 +1,8 @@
 //bisher verwendete materialien
 //food,material,power,science
 
+//package java;
+
 public class Resource {
     public String name;
     public double amount;
