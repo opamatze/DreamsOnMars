@@ -42,6 +42,12 @@ public class Module {
                 break;
             case "solarpanel" : this.new_solarpanel();
                 break;
+            case "rover"      : this.new_rover();
+                break;
+            case "factory"    : this.new_factory();
+                break;
+            case "replicator" : this.new_replicator();
+                break;
             default : System.out.println("unbekanntes Modul aufgerufen");
                       System.exit(1);
         }
@@ -113,7 +119,6 @@ public class Module {
     }
 
     private void new_mothership() {
-        produces.put("power",4.0);
         produces.put("food",4.0);
     }
     private void new_settler() {
@@ -132,7 +137,7 @@ public class Module {
     }
     private void new_lab() {
         construction_cost.put("material",-50.0);
-        construction_cost.put("time",10.0);
+        construction_cost.put("time",20.0);
 
         uses.put("power",-1.0);
         uses.put("material",-3.0);
@@ -157,5 +162,32 @@ public class Module {
 
         this.automatic = true;
     }
+    private void new_rover() {
+        construction_cost.put("material",-50.0);
+        construction_cost.put("time",10.0);
 
+        uses.put("power",-1.0);
+
+        produces.put("material",10.0);
+
+    }
+    private void new_factory() {
+        construction_cost.put("time",15.0);
+        construction_cost.put("material", -100.0);
+
+        uses.put("material",-10.0);
+
+        produces.put("power",20.0);
+    }
+    private void new_replicator() {
+        construction_cost.put("time", 20.0);
+        construction_cost.put("material",-150.0);
+        construction_cost.put("food",-20.0);
+
+        uses.put("material", -10.0);
+        uses.put("power", -10.0);
+
+        produces.put("food",20.0);
+
+    }
 }

@@ -21,11 +21,13 @@
         .btn { margin: 1px;}
         .simonRowTop { border-radius: 0px 0px 15px 15px; text-align:center;}
         .simonRowSecond { height:150px;}
+        .simonRowThird { height: 300px;}
         .simonCol { border: 0px dashed greenyellow; }
         .simonColUser { padding:10px;}
         #resource_container { padding: 5px; }
-        #module_container { padding: 5px; height: 300px; overflow-y:auto;}
+        #module_container { padding: 5px; height: 95%; overflow-y:auto;}
         #event_container { padding: 5px; height: 100%; overflow-y:auto;}
+        #stats_container { padding: 5px; }
 
     </style>
 </head>
@@ -41,19 +43,14 @@
             <div class="col-lg-7 simonCol" id="event_container"> Ereignisse
             </div>
     </div>
-    <div class="row" id="module_container">
+    <div class="row simonRowThird" >
+        <div class="col-lg-8" id="module_container"></div>
+        <div class="col-lg-4" id="stats_container"></div>
 
     </div>
     <div class="row row_bottom">
-        <div class="col-lg-12 simonCol simonColUser" id="gameControl">
-            Baue neue Module:
-            <button class="btn btn-sm btn-primary" type="button" title="collector (10M)"  onclick="blur(); building='collector';"> Cl </button>
-            <button class="btn btn-sm btn-primary" type="submit" title="greenhouse (10M 5F)" onclick="blur(); building='greenhouse'"> Gh </button>
-            <button class="btn btn-sm btn-primary" type="submit" title="solarpanel (10M)" onclick="blur(); building='solarpanel'"> Sp </button>
-            <button class="btn btn-sm btn-primary" type="submit" title="lab (50M)"        onclick="blur(); building='lab'"> Lb </button>
-
+        <div class="col-lg-12 simonCol simonColUser" id="user_container">
         </div>
-
     </div>
     <div class="row" id="debug"></div>
 </div>
