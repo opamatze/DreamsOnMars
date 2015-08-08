@@ -1,9 +1,6 @@
 //package java;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Controller {
 
@@ -19,15 +16,20 @@ public class Controller {
         Map<String, Resource> resources = new HashMap<>();
         Map<String, Module> modules   = new HashMap<>();
         Map<String, Settler> settler  = new HashMap<>();
-        Map<String, Option> options   = new HashMap<>();
+        Map<String, Option> options   = new LinkedHashMap<>();
+
             //alle Resourcen, die es gibt
         String[] resource_names    = new String[]{"food","unassigned settler","power","material","science" };
+
             //alle Module, die gebaut werden können mit minimum an Forschung (Fortschritt)
-        Map<String,Double> option_cost = new HashMap<>();
-        option_cost.put("greenhouse",0.0);
-        option_cost.put("collector",0.0);
-        option_cost.put("lab",0.0);
-        option_cost.put("solarpanel",0.0);
+        options.put("greenhouse", new Option("greenhouse","gh",0));
+        options.put("collector", new Option("collector","cl",0));
+        options.put("lab", new Option("lab","lb",0));
+        options.put("solarpanel", new Option("solarpanel","sp",0));
+        options.put("rover", new Option("rover","rv",100));
+        options.put("factory", new Option("factory","fc",200));
+        options.put("replicator", new Option("replicator","rp",500));
+
             //alle Settler
         settler.put("settler1", new Settler());
         settler.put("settler2", new Settler());
@@ -46,7 +48,7 @@ public class Controller {
         events.put(151, new Event(151,"Ein Siedler ist ärmlich verhungert.",1.0,1,0));
 
         //reguläre ereignisse
-        events.put(301, new Event(301,"Raumschifflieferungen von der Erde (+20 Nahrung, +20 Energie, +1 Kosmonaut", 1.0, 5, 0));
+        events.put(301, new Event(301,"Raumschifflieferungen von der Erde (+20 Nahrung, +20 Energie, +1 Kosmonaut)", 1.0, 15, 0));
         events.get(301).add_effect("resource","food",20.0);
         events.get(301).add_effect("resource","power",20.0);
         events.get(301).add_effect("settler","settler",1.0);
@@ -69,10 +71,8 @@ public class Controller {
         
             //Anfangsresourcen
         for (String res : resource_names )
-            resources.put(res, new Resource(res,100.0));
-            //Anfangsoptionen
-        for (Map.Entry<String,Double> opt : option_cost.entrySet())
-            options.put(opt.getKey(), new Option(opt.getKey(),opt.getValue()));
+            resources.put(res, new Resource(res,50.0));
+
             //Anfangsmodule
         modules.put("mothership", new Module("mothership"));
         modules.get("mothership").build_module(null); //aktiviert Modul ohne Konstruktionskosten
@@ -180,41 +180,17 @@ public class Controller {
         event_handler.pick_event_by_chance(state);
 
     }
-    public String pull_user_info() {
 
-        String output = "";
-
-            //resources
-        for(Map.Entry<String,Resource> res : state.resources.entrySet())
-            output += res.getKey()+": "+res.getValue().amount+"<br> ";
-
-        output += "<br>---------------------------------<br>";
-            //modules
-        for(Map.Entry<String,Module> modu : state.modules.entrySet()) {
-            output += modu.getValue().name + "= ";
-            output += " uses: ";
-
-            for(Map.Entry<String,Double> resUse: modu.getValue().uses.entrySet())
-                output += resUse.getValue()+" "+resUse.getKey()+" ";
-            output += "|| produces: ";
-
-            for(Map.Entry<String,Double> resPrd: modu.getValue().produces.entrySet())
-                output += resPrd.getValue()+" "+resPrd.getKey()+" ";
-            output += "<br>";
-
-
-        }
-
-        return output;
-    }
     public String pull_user_info_json() {
             View outputObj = new View(this.state);
             String output = outputObj.viewToString();
             return output;
     }
-    public void cleanUp() {
+    public void finishRound() {
             //delete modules, die keiner mehr brauch
         state.garbageCollectorModules();
+        state.enableOptions();
+        state.increment_round();
     }
 
 }

@@ -119,7 +119,7 @@ public class Model {
     public boolean remove_settler(String id) {
         if(settler.isEmpty()) {
             System.out.println("Keine Siedler mehr da");
-            System.exit(1);
+            return false;
         }
             //remove random settler and take any id
         if(id.equals("settler")) {
@@ -150,6 +150,12 @@ public class Model {
 
         System.out.println("settlerid: "+id+" existiert nicht, aber alle möglichen Überreste wurden entfernt.");
         return false;
+    }
+    public void enableOptions() {
+        for(Map.Entry<String,Option> entry : options.entrySet()) {
+            if(resources.get("science").amount > entry.getValue().min_science)
+                entry.getValue().make_available();
+        }
     }
     public void garbageCollectorModules() {
         for(Map.Entry<String,Module> entry : modules.entrySet()) {

@@ -38,12 +38,11 @@ public class webgate extends HttpServlet {
                 System.out.println("modul? " + request.getParameter("new_module"));
 
                 session_tracker.get(username).events();
-                // user_info = session_tracker.get(username).pull_user_info();
                 user_info = session_tracker.get(username).pull_user_info_json();
                 System.out.println("userinfo: " + user_info);
-                session_tracker.get(username).state.increment_round();
-                    //aufräumen
-                session_tracker.get(username).cleanUp();
+
+                    //deploy finishRound script
+                session_tracker.get(username).finishRound();
 
             }catch(Exception e) {System.out.println(e);}
 

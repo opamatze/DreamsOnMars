@@ -15,18 +15,21 @@ public class View {
 
         JSONObject resources;
         JSONObject modules;
-        JSONArray events;
+        JSONArray  events;
+        JSONObject options;
 
         System.out.println("view constr called");
         System.out.println("state.resources: "+state.resources.toString());
 
         browserOutput = new JSONObject();
 
+        //resources
             //exists always
         resources = new JSONObject();
         for(Map.Entry<String,Resource> res : state.resources.entrySet()) {
             resources.put(res.getValue().name, res.getValue().amount);
         }
+        //modules
             //check if modules exist
         modules = new JSONObject();
         if(state.modules != null) {
@@ -50,6 +53,7 @@ public class View {
                 modules.append(m.getKey(), next_module);
             }
         }
+        //events
             //check if event_stack exist
         if(!state.event_browserOutput_stack.isEmpty()) {
             events = createEventList(state.event_browserOutput_stack, state);
@@ -60,10 +64,24 @@ public class View {
             events = new JSONArray();
             System.out.println("new JSONObject();");
         }
+        //options
+        options = new JSONObject();
+        for(Map.Entry<String,Option> entry : state.options.entrySet()) {
+            Option option = entry.getValue();
+            JSONObject next_option = new JSONObject();
+            next_option.put("name",option.name);
+            next_option.put("label",option.label);
+            next_option.put("title",option.title);
+            next_option.put("min_science",option.min_science);
+            next_option.put("available",option.available);
+            options.put(option.name,next_option);
+
+        }
 
         browserOutput.append("resources", resources);
         browserOutput.append("modules",modules);
         browserOutput.append("gameEvents",events);
+        browserOutput.append("gameOptions",options);
 
         //state.event_browserOutput_stack.clear();
         System.out.println("browserOutput constructed: "+browserOutput.toString());
