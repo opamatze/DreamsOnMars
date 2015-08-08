@@ -6,7 +6,7 @@ var change_assignment = "";
 function pull_new_status(new_username)
 {
     username = new_username;
-    $.post("http://localhost:8080/DreamOnMars/webgate",
+    $.post("http://localhost:8088/webgate",
             {"username":username,"new_module":building,"change_assignment":change_assignment},
 
             function(data,status) {

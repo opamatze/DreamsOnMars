@@ -1,18 +1,3 @@
-#Ordner die nicht mit hochgeladen werden sollen
-
-build/
-dist/
-nbproject/
-web/META-INF/
-web/WEB-INF/
-web/bootstrap-3.3.5-dist/
-src/java/JSON-java-master/
-src/conf/
-.gitignore
-build.xml
-.gitattributes
-
-
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
